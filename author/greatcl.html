@@ -58,8 +58,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="http://blog.greatcl.com/gong-zuo-liao-hao-jiu-xie-gan-xiang.html"><h1>工作了好久，一些感想</h1></a>
-六 15 三月 2014
+            <a href="http://blog.greatcl.com/zai-linuxzhong-duan-huo-qu-tu-pian-xin-xi-ru-kuan-gao.html"><h1>在Linux终端获取图片信息(如宽、高)</h1></a>
+日 16 三月 2014
 
 by <a class="url fn" href="http://blog.greatcl.com/author/greatcl.html">greatcl</a>
  
@@ -68,17 +68,161 @@ by <a class="url fn" href="http://blog.greatcl.com/author/greatcl.html">greatcl<
  
         </div>
         
-        <div><blockquote>
+        <div><p>有时候会需要查看图片的信息，专门打开一个图片软件来做这件事，真是会比较麻烦。其实在终端里就可以做这件事了。</p>
+<hr />
+<h3>file命令</h3>
+<div class="highlight"><pre><span class="mi">0</span> <span class="err">✓</span>  <span class="n">Pictures</span> <span class="err">$</span> <span class="n">file</span> <span class="n">couple</span><span class="p">.</span><span class="n">png</span>
+<span class="n">couple</span><span class="p">.</span><span class="n">png</span><span class="o">:</span> <span class="n">PNG</span> <span class="n">image</span> <span class="n">data</span><span class="p">,</span> <span class="mi">1440</span> <span class="n">x</span> <span class="mi">900</span><span class="p">,</span> <span class="mi">8</span><span class="o">-</span><span class="n">bit</span><span class="o">/</span><span class="n">color</span> <span class="n">RGB</span><span class="p">,</span> <span class="n">non</span><span class="o">-</span><span class="n">interlaced</span>
+</pre></div>
+
+
+<p>但是并非所有的图片都可以显示尺寸，JPEG格式的就不可以</p>
+<div class="highlight"><pre><span class="mi">0</span> <span class="err">✓</span>  <span class="n">Pictures</span> <span class="err">$</span> <span class="n">file</span> <span class="n">couple</span><span class="p">.</span><span class="n">jpg</span>
+<span class="n">couple</span><span class="p">.</span><span class="n">jpg</span><span class="o">:</span> <span class="n">JPEG</span> <span class="n">image</span> <span class="n">data</span><span class="p">,</span> <span class="n">JFIF</span> <span class="n">standard</span> <span class="mf">1.01</span><span class="p">,</span> <span class="n">comment</span><span class="o">:</span> <span class="s">&quot;</span><span class="se">\377\376</span><span class="s">&quot;</span>
+</pre></div>
+
+
+<h3>rdjpgcom 命令</h3>
+<p>相比file命令不能显示JPEG格式图片的尺寸，rdjpgcom命令则只能处理JPEG格式的文件</p>
+<div class="highlight"><pre><span class="mi">0</span> <span class="err">✓</span>  <span class="n">Pictures</span> <span class="err">$</span> <span class="n">rdjpgcom</span> <span class="o">-</span><span class="n">verbose</span> <span class="n">smoke</span><span class="p">.</span><span class="n">jpg</span> 
+<span class="n">JPEG</span> <span class="n">image</span> <span class="n">is</span> <span class="mi">1920</span><span class="n">w</span> <span class="o">*</span> <span class="mi">1200</span><span class="n">h</span><span class="p">,</span> <span class="mi">3</span> <span class="n">color</span> <span class="n">components</span><span class="p">,</span> <span class="mi">8</span> <span class="n">bits</span> <span class="n">per</span> <span class="n">sample</span>
+<span class="n">JPEG</span> <span class="n">process</span><span class="o">:</span> <span class="n">Baseline</span>
+</pre></div>
+
+
+<h3>identify 命令</h3>
+<div class="highlight"><pre><span class="mi">0</span> <span class="err">✓</span>  <span class="n">Pictures</span> <span class="err">$</span> <span class="n">identify</span> <span class="n">couple</span><span class="p">.</span><span class="n">png</span> 
+<span class="n">couple</span><span class="p">.</span><span class="n">png</span> <span class="n">PNG</span> <span class="mi">1440</span><span class="n">x900</span> <span class="mi">1440</span><span class="n">x900</span><span class="o">+</span><span class="mi">0</span><span class="o">+</span><span class="mi">0</span> <span class="mi">8</span><span class="o">-</span><span class="n">bit</span> <span class="n">DirectClass</span> <span class="mf">1.44</span><span class="n">MB</span> <span class="mf">0.000</span><span class="n">u</span> <span class="mi">0</span><span class="o">:</span><span class="mf">00.000</span>
+</pre></div>
+
+
+<p>identify命令对JPEG格式也是适用的</p>
+<div class="highlight"><pre><span class="mi">0</span> <span class="err">✓</span>  <span class="n">Pictures</span> <span class="err">$</span> <span class="n">identify</span> <span class="n">smoke</span><span class="p">.</span><span class="n">jpg</span> 
+<span class="n">smoke</span><span class="p">.</span><span class="n">jpg</span> <span class="n">JPEG</span> <span class="mi">1920</span><span class="n">x1200</span> <span class="mi">1920</span><span class="n">x1200</span><span class="o">+</span><span class="mi">0</span><span class="o">+</span><span class="mi">0</span> <span class="mi">8</span><span class="o">-</span><span class="n">bit</span> <span class="n">DirectClass</span> <span class="mi">328</span><span class="n">KB</span> <span class="mf">0.010</span><span class="n">u</span> <span class="mi">0</span><span class="o">:</span><span class="mf">00.010</span>
+</pre></div>
+
+
+<h3>mediainfo 命令</h3>
+<div class="highlight"><pre><span class="mi">0</span> <span class="err">✓</span>  <span class="n">Pictures</span> <span class="err">$</span> <span class="n">mediainfo</span> <span class="n">couple</span><span class="p">.</span><span class="n">png</span>
+<span class="n">General</span>
+<span class="n">Complete</span> <span class="n">name</span>                            <span class="o">:</span> <span class="n">couple</span><span class="p">.</span><span class="n">png</span>
+<span class="n">Format</span>                                   <span class="o">:</span> <span class="n">PNG</span>
+<span class="n">Format</span><span class="o">/</span><span class="n">Info</span>                              <span class="o">:</span> <span class="n">Portable</span> <span class="n">Network</span> <span class="n">Graphic</span>
+<span class="n">File</span> <span class="n">size</span>                                <span class="o">:</span> <span class="mf">1.37</span> <span class="n">MiB</span>
+
+<span class="n">Image</span>
+<span class="n">Format</span>                                   <span class="o">:</span> <span class="n">LZ77</span>
+<span class="n">Width</span>                                    <span class="o">:</span> <span class="mi">1</span> <span class="mi">440</span> <span class="n">pixels</span>
+<span class="n">Height</span>                                   <span class="o">:</span> <span class="mi">900</span> <span class="n">pixels</span>
+<span class="n">Bit</span> <span class="n">depth</span>                                <span class="o">:</span> <span class="mi">24</span> <span class="n">bits</span>
+</pre></div>
+
+
+<p>mediainfo 还可适用于其他多媒体文件，如音频、视频等</p>
+<div class="highlight"><pre><span class="mi">0</span> <span class="err">✓</span>  <span class="n">Music</span> <span class="err">$</span> <span class="n">mediainfo</span> <span class="err">时间都去哪儿了</span><span class="p">.</span><span class="n">mp3</span> 
+<span class="n">General</span>
+<span class="n">Complete</span> <span class="n">name</span>                            <span class="o">:</span> <span class="err">时间都去哪儿了</span><span class="p">.</span><span class="n">mp3</span>
+<span class="n">Format</span>                                   <span class="o">:</span> <span class="n">MPEG</span> <span class="n">Audio</span>
+<span class="n">File</span> <span class="n">size</span>                                <span class="o">:</span> <span class="mf">3.39</span> <span class="n">MiB</span>
+<span class="n">Duration</span>                                 <span class="o">:</span> <span class="mi">3</span><span class="n">mn</span> <span class="mi">40</span><span class="n">s</span>
+<span class="n">Overall</span> <span class="n">bit</span> <span class="n">rate</span> <span class="n">mode</span>                    <span class="o">:</span> <span class="n">Constant</span>
+<span class="n">Overall</span> <span class="n">bit</span> <span class="n">rate</span>                         <span class="o">:</span> <span class="mi">128</span> <span class="n">Kbps</span>
+<span class="n">Album</span>                                    <span class="o">:</span> <span class="err">时间都去哪儿了</span>
+<span class="n">Track</span> <span class="n">name</span>                               <span class="o">:</span> <span class="err">时间都去哪儿了</span>
+<span class="n">Performer</span>                                <span class="o">:</span> <span class="err">王铮亮</span>
+<span class="n">Recorded</span> <span class="n">date</span>                            <span class="o">:</span> <span class="mi">2013</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">20</span>
+<span class="n">Writing</span> <span class="n">library</span>                          <span class="o">:</span> <span class="n">LAME3</span><span class="mf">.99.5</span>
+<span class="n">Cover</span>                                    <span class="o">:</span> <span class="n">Yes</span>
+<span class="n">Cover</span> <span class="n">description</span>                        <span class="o">:</span> <span class="n">e</span>
+<span class="n">Cover</span> <span class="n">type</span>                               <span class="o">:</span> <span class="n">Cover</span> <span class="p">(</span><span class="n">front</span><span class="p">)</span>
+<span class="n">Cover</span> <span class="n">MIME</span>                               <span class="o">:</span> <span class="n">image</span><span class="o">/</span><span class="n">jpeg</span>
+
+<span class="n">Audio</span>
+<span class="n">Format</span>                                   <span class="o">:</span> <span class="n">MPEG</span> <span class="n">Audio</span>
+<span class="n">Format</span> <span class="n">version</span>                           <span class="o">:</span> <span class="n">Version</span> <span class="mi">1</span>
+<span class="n">Format</span> <span class="n">profile</span>                           <span class="o">:</span> <span class="n">Layer</span> <span class="mi">3</span>
+<span class="n">Mode</span>                                     <span class="o">:</span> <span class="n">Joint</span> <span class="n">stereo</span>
+<span class="n">Duration</span>                                 <span class="o">:</span> <span class="mi">3</span><span class="n">mn</span> <span class="mi">40</span><span class="n">s</span>
+<span class="n">Bit</span> <span class="n">rate</span> <span class="n">mode</span>                            <span class="o">:</span> <span class="n">Constant</span>
+<span class="n">Bit</span> <span class="n">rate</span>                                 <span class="o">:</span> <span class="mi">128</span> <span class="n">Kbps</span>
+<span class="n">Channel</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>                               <span class="o">:</span> <span class="mi">2</span> <span class="n">channels</span>
+<span class="n">Sampling</span> <span class="n">rate</span>                            <span class="o">:</span> <span class="mf">44.1</span> <span class="n">KHz</span>
+<span class="n">Compression</span> <span class="n">mode</span>                         <span class="o">:</span> <span class="n">Lossy</span>
+<span class="n">Stream</span> <span class="n">size</span>                              <span class="o">:</span> <span class="mf">3.36</span> <span class="n">MiB</span> <span class="p">(</span><span class="mi">99</span><span class="o">%</span><span class="p">)</span>
+<span class="n">Writing</span> <span class="n">library</span>                          <span class="o">:</span> <span class="n">LAME3</span><span class="mf">.99.5</span>
+</pre></div>
+
+
+<h3>feh 命令</h3>
+<div class="highlight"><pre><span class="mi">0</span> <span class="err">✓</span>  <span class="n">Pictures</span> <span class="err">$</span> <span class="n">feh</span> <span class="o">-</span><span class="n">l</span> <span class="n">smoke</span><span class="p">.</span><span class="n">jpg</span> <span class="n">couple</span><span class="p">.</span><span class="n">png</span> 
+<span class="n">NUM</span> <span class="n">FORMAT</span>  <span class="n">WIDTH</span>   <span class="n">HEIGHT</span>  <span class="n">PIXELS</span>  <span class="n">SIZE</span><span class="p">(</span><span class="n">bytes</span><span class="p">)</span> <span class="n">ALPHA</span>   <span class="n">FILENAME</span>
+<span class="mi">1</span>   <span class="n">jpeg</span>    <span class="mi">1920</span>    <span class="mi">1200</span>    <span class="mi">2304000</span> <span class="mi">328285</span>      <span class="o">-</span>   <span class="n">smoke</span><span class="p">.</span><span class="n">jpg</span>
+<span class="mi">2</span>   <span class="n">png</span>     <span class="mi">1440</span>    <span class="mi">900</span>     <span class="mi">1296000</span> <span class="mi">1439801</span>     <span class="o">-</span>   <span class="n">couple</span><span class="p">.</span><span class="n">png</span>
+</pre></div>
+
+
+<h3>exiftool 命令</h3>
+<div class="highlight"><pre><span class="mi">0</span> <span class="err">✓</span>  <span class="n">Pictures</span> <span class="err">$</span> <span class="n">exiftool</span> <span class="n">couple</span><span class="p">.</span><span class="n">png</span> 
+<span class="n">ExifTool</span> <span class="n">Version</span> <span class="n">Number</span>         <span class="o">:</span> <span class="mf">8.60</span>
+<span class="n">File</span> <span class="n">Name</span>                       <span class="o">:</span> <span class="n">couple</span><span class="p">.</span><span class="n">png</span>
+<span class="n">Directory</span>                       <span class="o">:</span> <span class="p">.</span>
+<span class="n">File</span> <span class="n">Size</span>                       <span class="o">:</span> <span class="mi">1406</span> <span class="n">kB</span>
+<span class="n">File</span> <span class="n">Modification</span> <span class="n">Date</span><span class="o">/</span><span class="n">Time</span>     <span class="o">:</span> <span class="mi">2014</span><span class="o">:</span><span class="mo">03</span><span class="o">:</span><span class="mi">16</span> <span class="mi">13</span><span class="o">:</span><span class="mi">34</span><span class="o">:</span><span class="mo">01</span><span class="o">+</span><span class="mi">08</span><span class="o">:</span><span class="mo">00</span>
+<span class="n">File</span> <span class="n">Permissions</span>                <span class="o">:</span> <span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span>
+<span class="n">File</span> <span class="n">Type</span>                       <span class="o">:</span> <span class="n">PNG</span>
+<span class="n">MIME</span> <span class="n">Type</span>                       <span class="o">:</span> <span class="n">image</span><span class="o">/</span><span class="n">png</span>
+<span class="n">Image</span> <span class="n">Width</span>                     <span class="o">:</span> <span class="mi">1440</span>
+<span class="n">Image</span> <span class="n">Height</span>                    <span class="o">:</span> <span class="mi">900</span>
+<span class="n">Bit</span> <span class="n">Depth</span>                       <span class="o">:</span> <span class="mi">8</span>
+<span class="n">Color</span> <span class="n">Type</span>                      <span class="o">:</span> <span class="n">RGB</span>
+<span class="n">Compression</span>                     <span class="o">:</span> <span class="n">Deflate</span><span class="o">/</span><span class="n">Inflate</span>
+<span class="n">Filter</span>                          <span class="o">:</span> <span class="n">Adaptive</span>
+<span class="n">Interlace</span>                       <span class="o">:</span> <span class="n">Noninterlaced</span>
+<span class="n">Background</span> <span class="n">Color</span>                <span class="o">:</span> <span class="mi">255</span> <span class="mi">255</span> <span class="mi">255</span>
+<span class="n">Pixels</span> <span class="n">Per</span> <span class="n">Unit</span> <span class="n">X</span>               <span class="o">:</span> <span class="mi">72</span>
+<span class="n">Pixels</span> <span class="n">Per</span> <span class="n">Unit</span> <span class="n">Y</span>               <span class="o">:</span> <span class="mi">72</span>
+<span class="n">Pixel</span> <span class="n">Units</span>                     <span class="o">:</span> <span class="n">Unknown</span>
+<span class="n">Comment</span>                         <span class="o">:</span> <span class="err">ÿþ</span>
+<span class="n">Datecreate</span>                      <span class="o">:</span> <span class="mi">2014</span><span class="o">-</span><span class="mo">03</span><span class="o">-</span><span class="mi">16</span><span class="n">T13</span><span class="o">:</span><span class="mi">31</span><span class="o">:</span><span class="mi">20</span><span class="o">+</span><span class="mi">08</span><span class="o">:</span><span class="mo">00</span>
+<span class="n">Datemodify</span>                      <span class="o">:</span> <span class="mi">2014</span><span class="o">-</span><span class="mo">03</span><span class="o">-</span><span class="mi">16</span><span class="n">T13</span><span class="o">:</span><span class="mi">31</span><span class="o">:</span><span class="mo">04</span><span class="o">+</span><span class="mi">08</span><span class="o">:</span><span class="mo">00</span>
+<span class="n">Jpegcolorspace</span>                  <span class="o">:</span> <span class="mi">2</span>
+<span class="n">Jpegsampling</span><span class="o">-</span><span class="n">factor</span>             <span class="o">:</span> <span class="mi">2</span><span class="n">x2</span><span class="p">,</span><span class="mi">1</span><span class="n">x1</span><span class="p">,</span><span class="mi">1</span><span class="n">x1</span>
+<span class="n">Image</span> <span class="n">Size</span>                      <span class="o">:</span> <span class="mi">1440</span><span class="n">x900</span>
+</pre></div>
+
+
+<blockquote>
+<h4>附：以上命令大多需要安装独立的软件包</h4>
+<p>点击<a href="http://superuser.com/questions/275502/how-to-get-information-about-an-imagepicture-from-linux-commandline" target="_blank" title="How to get information about an image(picture) from linux commandline?" >这里</a>,查看原论坛讨论。</p>
+</blockquote></div>
+        <hr />
+    </div>
+		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="http://blog.greatcl.com/gong-zuo-liao-hao-jiu-xie-gan-xiang.html"><h2>工作了好久，一些感想</h2></a>
+        <div class= "well small"> 六 15 三月 2014
+
+by <a class="url fn" href="http://blog.greatcl.com/author/greatcl.html">greatcl</a>
+ 
+
+
+ </div>
+        <div class="summary"><blockquote>
 <p>Life is still, but it's different from the one before.</p>
 </blockquote>
 <hr />
 <div class="highlight"><pre><span class="nt">&lt;script&gt;</span>
     alert(&quot;hello github&quot;);
 <span class="nt">&lt;/script&gt;</span>
-</pre></div></div>
-        <hr />
-    </div>
-		
+</pre></div> <a class="btn btn-info xsmall" href="http://blog.greatcl.com/gong-zuo-liao-hao-jiu-xie-gan-xiang.html">查看全文</a></div>
+    </div>	
+				
 
  
         
@@ -100,7 +244,7 @@ by <a class="url fn" href="http://blog.greatcl.com/author/greatcl.html">greatcl<
     $("#test").click(function(){
         alert("You're genius! This's for testing JS");
     });
-</script></p> <a class="btn btn-info xsmall" href="http://blog.greatcl.com/zhuan-zhan-github.html">read more</a></div>
+</script></p> <a class="btn btn-info xsmall" href="http://blog.greatcl.com/zhuan-zhan-github.html">查看全文</a></div>
     </div>	
 				
 <div class="pagination">
@@ -138,6 +282,7 @@ by <a class="url fn" href="http://blog.greatcl.com/author/greatcl.html">greatcl<
 				分类
                 </li>
                 
+                <li><a href="http://blog.greatcl.com/category/linux.html">Linux</a></li>
                 <li><a href="http://blog.greatcl.com/category/sui-sui-nian.html">碎碎念</a></li>
                    
             </ul>
@@ -168,6 +313,7 @@ by <a class="url fn" href="http://blog.greatcl.com/author/greatcl.html">greatcl<
                 </li>
            
                 <li><a href="https://github.com/greatcl">GitHub</a></li>
+                <li><a href="http://weibo.com/u/1875025293">Weibo</a></li>
             </ul>
             </div>
             </div>
